@@ -1,0 +1,26 @@
+!*:.:.:.:.:!
+! FizzBuzz !
+!.:.:.:.:.*!
+
+link basic math
+
+def isMultiple : value of {
+    = 0 (% (get value) (get of))
+}
+
+for i from 0 to (+ 100 1) {
+    if { and (isMultiple (get i) 5) (isMultiple (get i) 3) } {
+        display "FizzBuzz!"
+    } else {
+        if { isMultiple (get i) 3 } {
+            display "Fizz"
+        } else {
+            if { isMultiple (get i) 5 } {
+                display "Buzz"
+            } else {
+                display (get i)
+            }
+        }
+    }
+}
+
