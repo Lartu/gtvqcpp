@@ -114,8 +114,8 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
 
     for (size_t i = 0; i < source.length(); ++i)
     {
-        gtvqString character = source[static_cast<int>(i)];
-        last_two_chars = last_two_chars[1] + character;
+        char character = source[i];
+        last_two_chars = (string)"" + last_two_chars[1] + character;
 
         // Comments
         if (last_two_chars == "!*" && !parsing_string)
@@ -129,7 +129,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             parsing_comment = false;
         }
         // Strings
-        else if (character == "\"" && !next_char_is_escaped && !parsing_comment && !parsing_string)
+        else if (character == '"' && !next_char_is_escaped && !parsing_comment && !parsing_string)
         {
             parsing_string = true;
             if (subline_level > 0 || block_quote_level > 0)
@@ -137,7 +137,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
                 current_token += character;
             }
         }
-        else if (character == "\"" && !next_char_is_escaped && parsing_string)
+        else if (character == '"' && !next_char_is_escaped && parsing_string)
         {
             parsing_string = false;
             if (subline_level > 0 || block_quote_level > 0)
@@ -153,7 +153,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
         }
         // Sublines
-        else if (character == "(" && !parsing_comment && !parsing_string)
+        else if (character == '(' && !parsing_comment && !parsing_string)
         {
             if (subline_level > 0 || block_quote_level > 0)
             {
@@ -161,7 +161,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
             subline_level += 1;
         }
-        else if (character == ")" && !parsing_comment && !parsing_string)
+        else if (character == ')' && !parsing_comment && !parsing_string)
         {
             subline_level -= 1;
             if (subline_level > 0 || block_quote_level > 0)
@@ -178,7 +178,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
         }
         // Block Quotes
-        else if (character == "{" && !parsing_comment && !parsing_string)
+        else if (character == '{' && !parsing_comment && !parsing_string)
         {
             if (block_quote_level > 0)
             {
@@ -186,7 +186,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
             block_quote_level += 1;
         }
-        else if (character == "}" && !parsing_comment && !parsing_string)
+        else if (character == '}' && !parsing_comment && !parsing_string)
         {
             block_quote_level -= 1;
             if (block_quote_level > 0)
@@ -203,7 +203,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
         }
         // Whitespace
-        else if ((isspace(character.str_rep()[0]) || character == ";") && !parsing_comment && !parsing_string && subline_level == 0 && block_quote_level == 0)
+        else if ((isspace(character) || character == ';') && !parsing_comment && !parsing_string && subline_level == 0 && block_quote_level == 0)
         {
             // Push word
             gtvqString_trim(current_token);
@@ -216,7 +216,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             current_token = "";
 
             // Push line
-            if (character == "\n" || character == ";")
+            if (character == '\n' || character == ';')
             {
                 if (!current_line.getWords().empty())
                 {
@@ -233,19 +233,19 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             {
                 if (next_char_is_escaped)
                 {
-                    if (character == "n")
+                    if (character == 'n')
                     {
-                        character = "\n";
+                        character = '\n';
                     }
-                    else if (character == "t")
+                    else if (character == 't')
                     {
-                        character = "\t";
+                        character = '\t';
                     }
                     next_char_is_escaped = false;
                 }
                 else
                 {
-                    if (parsing_string && character == "\\")
+                    if (parsing_string && character == '\\')
                     {
                         next_char_is_escaped = true;
                         continue;
@@ -285,7 +285,7 @@ gtvqString gtvq_call_linked_function(gtvqString &command, vector<gtvqString> &pa
     }
     else
     {
-        gtvq_error("Command '" + command.str_rep() + "' not registered as a valid command.");
+        gtvq_error("Command '" + command + "' not registered as a valid command.");
     }
     return "";
 }
@@ -304,7 +304,7 @@ gtvqString load_module_handler(gtvqString &command, vector<gtvqString> &paramete
 {
     for (gtvqString &parameter : parameters)
     {
-        string lib_name = parameter.str_rep() + ".gvdl";
+        string lib_name = parameter + ".gvdl";
         void *handle = dlopen(lib_name.c_str(), RTLD_LAZY);
         if (!handle)
         {

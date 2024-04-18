@@ -9,7 +9,7 @@
 
 using namespace std;
 
-#include "gtvqString.h"
+#include "gtvqStringAlt.h"
 #include "gtvqLine.h"
 
 // This is the handler passed to the lookup table to handle a command

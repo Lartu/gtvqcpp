@@ -19,8 +19,20 @@ def fibonacci : n {
     }
 }
 
+def unfibonacci : n {
+    if { < (get n) 2 } {
+        val 1
+    } else {
+        + (unfibonacci (- (get n) 1)) (unfibonacci (- (get n) 2))
+    }
+}
+
 for i from 0 to (+ 200 1) {
     display "Fibonacci of " (get i) ": " (fibonacci (get i))
+}
+
+for i from 0 to (+ 20 1) {
+    display "Unibonacci of " (get i) ": " (unfibonacci (get i))
 }
 
 

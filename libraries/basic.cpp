@@ -2,7 +2,7 @@
 #include <map>
 #include <stack>
 #include <string>
-#include "../gtvqString.h"
+#include "../gtvqStringAlt.h"
 
 using namespace std;
 typedef gtvqString (*gtvqHandler)(gtvqString &, std::vector<gtvqString> &);
@@ -62,6 +62,21 @@ void set_variable(gtvqString name, gtvqString value)
     variables.back()[name] = value;
 }
 
+bool isNumber(const std::string& str) {
+    std::istringstream iss(str);
+    double d;
+    char c;
+    return iss >> d && !(iss >> c);
+}
+
+string toString(double value)
+{
+    std::string str = to_string(value);
+    str.erase(str.find_last_not_of('0') + 1, std::string::npos);
+    str.erase(str.find_last_not_of('.') + 1, std::string::npos);
+    return str;
+}
+
 // join handler - joins multiple values into a single string
 gtvqString join_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
@@ -89,7 +104,7 @@ gtvqString set_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error("set expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error("set expects 2 parameters (" + toString(parameters.size()) + " given)");
     }
     set_variable(parameters[0], parameters[1]);
     return parameters[1];
@@ -101,7 +116,7 @@ gtvqString get_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 1)
     {
-        gtvq_error("get expects 1 parameter (" + to_string(parameters.size()) + " given)");
+        gtvq_error("get expects 1 parameter (" + toString(parameters.size()) + " given)");
     }
     gtvqString var_name = parameters[0];
     for (size_t i = variables.size() - 1; i >= 0; i--)
@@ -113,7 +128,7 @@ gtvqString get_handler(gtvqString &command, vector<gtvqString> &parameters)
         if (i == 0)
             break;
     }
-    gtvq_error("Variable " + var_name.str_rep() + " doesn't exist.");
+    gtvq_error("Variable " + var_name + " doesn't exist.");
     return "";
 }
 
@@ -122,7 +137,7 @@ gtvqString glset_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error("glset expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error("glset expects 2 parameters (" + toString(parameters.size()) + " given)");
     }
     variables[0][parameters[0]] = parameters[1];
     return parameters[1];
@@ -134,14 +149,14 @@ gtvqString glget_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 1)
     {
-        gtvq_error("glget expects 1 parameter (" + to_string(parameters.size()) + " given)");
+        gtvq_error("glget expects 1 parameter (" + toString(parameters.size()) + " given)");
     }
     gtvqString var_name = parameters[0];
     if (variables[0].count(var_name) > 0)
     {
         return variables[0][var_name];
     }
-    gtvq_error("Global variable " + var_name.str_rep() + " doesn't exist.");
+    gtvq_error("Global variable " + var_name + " doesn't exist.");
     return "";
 }
 
@@ -151,7 +166,7 @@ gtvqString exec_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 1)
     {
-        gtvq_error("exec expects 1 parameter (" + to_string(parameters.size()) + " given)");
+        gtvq_error("exec expects 1 parameter (" + toString(parameters.size()) + " given)");
     }
     return gtvq_execute_code(parameters[0]);
 }
@@ -161,14 +176,14 @@ gtvqString exit_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() > 1)
     {
-        gtvq_error("exit expects 1 parameter or less (" + to_string(parameters.size()) + " given)");
+        gtvq_error("exit expects 1 parameter or less (" + toString(parameters.size()) + " given)");
     }
     int exit_code = 0;
     if (parameters.size() > 0)
     {
-        if (parameters[0].isNumber())
+        if (isNumber(parameters[0]))
         {
-            exit_code = (int)parameters[0].getNumber();
+            exit_code = (int)stod(parameters[0]);
         }
     }
     exit(exit_code);
@@ -186,7 +201,7 @@ gtvqString call_function(gtvqString &command, vector<gtvqString> &parameters)
         gtvqFunction &function = functions[command];
         if (parameters.size() != function.getParameters().size())
         {
-            gtvq_error(command.str_rep() + " expects " + to_string(function.getParameters().size()) + " parameter(s) (" + to_string(parameters.size()) + " given)");
+            gtvq_error(command + " expects " + toString(function.getParameters().size()) + " parameter(s) (" + toString(parameters.size()) + " given)");
         }
         for (size_t i = 0; i < function.getParameters().size(); ++i)
         {
@@ -196,7 +211,7 @@ gtvqString call_function(gtvqString &command, vector<gtvqString> &parameters)
     }
     else
     {
-        gtvq_error("The function '" + command.str_rep() + "' doesn't exist.");
+        gtvq_error("The function '" + command + "' doesn't exist.");
     }
     del_scope();
     return return_value;
@@ -226,7 +241,7 @@ gtvqString for_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 6)
     {
-        gtvq_error("for expects 6 parameter (" + to_string(parameters.size()) + " given)");
+        gtvq_error("for expects 6 parameter (" + toString(parameters.size()) + " given)");
     }
 
     if (parameters[1] != "from" || parameters[3] != "to")
@@ -234,13 +249,13 @@ gtvqString for_handler(gtvqString &command, vector<gtvqString> &parameters)
         gtvq_error("def usage: for <var> from <min (included)> to <max (excluded)> <body>");
     }
 
-    if (!parameters[2].isNumber() || !parameters[4].isNumber())
+    if (!isNumber(parameters[2]) || !isNumber(parameters[4]))
     {
         gtvq_error("for expects numeric min and max values.");
     }
 
-    double min_value = parameters[2].getNumber();
-    double max_value = parameters[4].getNumber();
+    double min_value = stoi(parameters[2]);
+    double max_value = stoi(parameters[4]);
 
     size_t increment = 1;
     if (max_value < min_value)
@@ -250,11 +265,11 @@ gtvqString for_handler(gtvqString &command, vector<gtvqString> &parameters)
 
     for (long i = min_value; i < max_value; i += increment)
     {
-        set_variable(parameters[0], (double)i);
+        set_variable(parameters[0], toString(i));
         gtvq_execute_code(parameters[5]);
     }
 
-    return (double)i;
+    return toString(i);
 }
 
 // skip - exits the current block. Returns the passed value or "".
@@ -263,7 +278,7 @@ gtvqString skip_handler(gtvqString &command, vector<gtvqString> &parameters)
     gtvq_request_block_exit();
     if (parameters.size() > 1)
     {
-        gtvq_error("skip expects 1 or less (" + to_string(parameters.size()) + " given)");
+        gtvq_error("skip expects 1 or less (" + toString(parameters.size()) + " given)");
     }
     else if (parameters.size() == 1)
     {
@@ -283,7 +298,7 @@ gtvqString if_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2 && parameters.size() != 4)
     {
-        gtvq_error("if expects 2 or 3 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error("if expects 2 or 3 parameters (" + toString(parameters.size()) + " given)");
     }
     gtvqString &conditional = parameters[0];
     gtvqString &true_branch = parameters[1];
@@ -315,7 +330,7 @@ gtvqString eq_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error("= expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error("= expects 2 parameters (" + toString(parameters.size()) + " given)");
     }
     if (parameters[0] == parameters[1])
     {
@@ -329,7 +344,7 @@ gtvqString neq_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error("!= expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error("!= expects 2 parameters (" + toString(parameters.size()) + " given)");
     }
     if (parameters[0] == parameters[1])
     {
@@ -343,7 +358,7 @@ gtvqString and_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error("and expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error("and expects 2 parameters (" + toString(parameters.size()) + " given)");
     }
     if (isTrue(parameters[0]) && isTrue(parameters[1]))
     {
@@ -357,7 +372,7 @@ gtvqString or_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error("or expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error("or expects 2 parameters (" + toString(parameters.size()) + " given)");
     }
     if (isTrue(parameters[0]) || isTrue(parameters[1]))
     {
@@ -371,7 +386,7 @@ gtvqString not_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 1)
     {
-        gtvq_error("not expects 1 parameter (" + to_string(parameters.size()) + " given)");
+        gtvq_error("not expects 1 parameter (" + toString(parameters.size()) + " given)");
     }
     if (isTrue(parameters[0]))
     {
@@ -385,7 +400,7 @@ gtvqString varex_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 1)
     {
-        gtvq_error("varex expects 1 parameter (" + to_string(parameters.size()) + " given)");
+        gtvq_error("varex expects 1 parameter (" + toString(parameters.size()) + " given)");
     }
     gtvqString var_name = parameters[0];
     for (size_t i = variables.size() - 1; i >= 0; --i)
@@ -405,7 +420,7 @@ gtvqString val_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 1)
     {
-        gtvq_error("vl expects 1 parameter (" + to_string(parameters.size()) + " given)");
+        gtvq_error("vl expects 1 parameter (" + toString(parameters.size()) + " given)");
     }
     return parameters[0];
 }
@@ -415,7 +430,7 @@ gtvqString while_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error("while expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error("while expects 2 parameters (" + toString(parameters.size()) + " given)");
     }
     gtvqString &conditional = parameters[0];
     gtvqString &body = parameters[1];
