@@ -114,7 +114,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
 
     for (size_t i = 0; i < source.length(); ++i)
     {
-        gtvqString character = source[static_cast<int>(i)] + "";
+        gtvqString character = source[static_cast<int>(i)];
         last_two_chars = last_two_chars[1] + character;
 
         // Comments
@@ -203,7 +203,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
         }
         // Whitespace
-        else if ((isspace(character/*.str_rep()*/[0]) || character == ";") && !parsing_comment && !parsing_string && subline_level == 0 && block_quote_level == 0)
+        else if ((isspace(character.str_rep()[0]) || character == ";") && !parsing_comment && !parsing_string && subline_level == 0 && block_quote_level == 0)
         {
             // Push word
             gtvqString_trim(current_token);
@@ -285,7 +285,7 @@ gtvqString gtvq_call_linked_function(gtvqString &command, vector<gtvqString> &pa
     }
     else
     {
-        gtvq_error("Command '" + command/*.str_rep()*/ + "' not registered as a valid command.");
+        gtvq_error("Command '" + command.str_rep() + "' not registered as a valid command.");
     }
     return "";
 }
@@ -304,7 +304,7 @@ gtvqString load_module_handler(gtvqString &command, vector<gtvqString> &paramete
 {
     for (gtvqString &parameter : parameters)
     {
-        string lib_name = parameter/*.str_rep()*/ + ".gvdl";
+        string lib_name = parameter.str_rep() + ".gvdl";
         void *handle = dlopen(lib_name.c_str(), RTLD_LAZY);
         if (!handle)
         {

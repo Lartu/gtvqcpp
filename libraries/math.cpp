@@ -2,7 +2,7 @@
 #include <map>
 #include <stack>
 #include <string>
-#include "../gtvqStringAlt.h"
+#include "../gtvqString.h"
 
 using namespace std;
 typedef gtvqString (*gtvqHandler)(gtvqString &, std::vector<gtvqString> &);
@@ -20,11 +20,11 @@ gtvqString add_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber() || !parameters[1].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects numeric parameters.");
+        gtvq_error(command.str_rep() + " expects numeric parameters.");
     }
     return parameters[0].getNumber() + parameters[1].getNumber();
 }
@@ -33,11 +33,11 @@ gtvqString sub_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber() || !parameters[1].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects numeric parameters.");
+        gtvq_error(command.str_rep() + " expects numeric parameters.");
     }
     return parameters[0].getNumber() - parameters[1].getNumber();
 }
@@ -46,11 +46,11 @@ gtvqString mul_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber() || !parameters[1].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects numeric parameters.");
+        gtvq_error(command.str_rep() + " expects numeric parameters.");
     }
     return parameters[0].getNumber() * parameters[1].getNumber();
 }
@@ -59,11 +59,11 @@ gtvqString div_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber() || !parameters[1].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects numeric parameters.");
+        gtvq_error(command.str_rep() + " expects numeric parameters.");
     }
     return parameters[0].getNumber() / parameters[1].getNumber();
 }
@@ -72,11 +72,11 @@ gtvqString intdiv_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber() || !parameters[1].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects numeric parameters.");
+        gtvq_error(command.str_rep() + " expects numeric parameters.");
     }
     return floor(parameters[0].getNumber() / parameters[1].getNumber());
 }
@@ -85,11 +85,11 @@ gtvqString mod_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber() || !parameters[1].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects numeric parameters.");
+        gtvq_error(command.str_rep() + " expects numeric parameters.");
     }
     long val_1 = parameters[0].getNumber();
     long val_2 = parameters[1].getNumber();
@@ -100,11 +100,11 @@ gtvqString gt_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber() || !parameters[1].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects numeric parameters.");
+        gtvq_error(command.str_rep() + " expects numeric parameters.");
     }
     if (parameters[0].getNumber() > parameters[1].getNumber())
     {
@@ -117,11 +117,11 @@ gtvqString lt_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber() || !parameters[1].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects numeric parameters.");
+        gtvq_error(command.str_rep() + " expects numeric parameters.");
     }
     if (parameters[0].getNumber() < parameters[1].getNumber())
     {
@@ -134,11 +134,11 @@ gtvqString ge_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber() || !parameters[1].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects numeric parameters.");
+        gtvq_error(command.str_rep() + " expects numeric parameters.");
     }
     if (parameters[0].getNumber() >= parameters[1].getNumber())
     {
@@ -151,11 +151,11 @@ gtvqString le_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 2)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 2 parameters (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber() || !parameters[1].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects numeric parameters.");
+        gtvq_error(command.str_rep() + " expects numeric parameters.");
     }
     if (parameters[0].getNumber() <= parameters[1].getNumber())
     {
@@ -168,11 +168,11 @@ gtvqString floor_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 1)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 1 parameter (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 1 parameter (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects a numeric parameter.");
+        gtvq_error(command.str_rep() + " expects a numeric parameter.");
     }
     return (double)(floor(parameters[0].getNumber()));
 }
@@ -181,11 +181,11 @@ gtvqString ceil_handler(gtvqString &command, vector<gtvqString> &parameters)
 {
     if (parameters.size() != 1)
     {
-        gtvq_error(command/*.str_rep()*/ + " expects 1 parameter (" + to_string(parameters.size()) + " given)");
+        gtvq_error(command.str_rep() + " expects 1 parameter (" + to_string(parameters.size()) + " given)");
     }
     if(!parameters[0].isNumber())
     {
-        gtvq_error(command/*.str_rep()*/ + " expects a numeric parameter.");
+        gtvq_error(command.str_rep() + " expects a numeric parameter.");
     }
     return (double)(ceil(parameters[0].getNumber()));
 }

@@ -2,7 +2,7 @@
 #include <map>
 #include <stack>
 #include <string>
-#include "../gtvqStringAlt.h"
+#include "../gtvqString.h"
 
 using namespace std;
 typedef gtvqString (*gtvqHandler)(gtvqString &, std::vector<gtvqString> &);
@@ -113,7 +113,7 @@ gtvqString get_handler(gtvqString &command, vector<gtvqString> &parameters)
         if (i == 0)
             break;
     }
-    gtvq_error("Variable " + var_name/*.str_rep()*/ + " doesn't exist.");
+    gtvq_error("Variable " + var_name.str_rep() + " doesn't exist.");
     return "";
 }
 
@@ -141,7 +141,7 @@ gtvqString glget_handler(gtvqString &command, vector<gtvqString> &parameters)
     {
         return variables[0][var_name];
     }
-    gtvq_error("Global variable " + var_name/*.str_rep()*/ + " doesn't exist.");
+    gtvq_error("Global variable " + var_name.str_rep() + " doesn't exist.");
     return "";
 }
 
@@ -186,7 +186,7 @@ gtvqString call_function(gtvqString &command, vector<gtvqString> &parameters)
         gtvqFunction &function = functions[command];
         if (parameters.size() != function.getParameters().size())
         {
-            gtvq_error(command/*.str_rep()*/ + " expects " + to_string(function.getParameters().size()) + " parameter(s) (" + to_string(parameters.size()) + " given)");
+            gtvq_error(command.str_rep() + " expects " + to_string(function.getParameters().size()) + " parameter(s) (" + to_string(parameters.size()) + " given)");
         }
         for (size_t i = 0; i < function.getParameters().size(); ++i)
         {
@@ -196,7 +196,7 @@ gtvqString call_function(gtvqString &command, vector<gtvqString> &parameters)
     }
     else
     {
-        gtvq_error("The function '" + command/*.str_rep()*/ + "' doesn't exist.");
+        gtvq_error("The function '" + command.str_rep() + "' doesn't exist.");
     }
     del_scope();
     return return_value;
