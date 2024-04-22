@@ -1,0 +1,122 @@
+!*:.:.:.:.:.:
+: COMEMOCOS :
+:.:.:.:.:.:*!
+
+link basic math ui
+
+# default values
+set comemocosid 0
+set comemocos "Noit"
+set mococount 0
+
+# default object sizes
+set buttonHeight 30
+set buttonWidth 140
+set imageWidth (+ (* (get buttonHeight) 2) 10)
+
+# functions
+def setEatenLabel : {
+    # Sets who ate the mocos
+    if {= (get mococount) 0} {
+        ui::text.set eaten (join (get comemocos) " no se comió ningún moco.")
+    } else {
+        ui::text.set eaten (join (get comemocos) " se comió " (get mococount) " " (if {= 1 (get mococount)} {
+            val "moco"
+        } else {
+            val "mocos"
+        }) ".")
+    }
+}
+
+# create window
+ui::window win_comemocos
+ui::text.set win_comemocos "Comemocos en gtvq"
+set winHeight (+ 10 10 (get imageWidth) 10 10 (* 2 (get buttonHeight)))
+set winWidth (+ 10 (get imageWidth) 10 (* 2 (get buttonWidth)) 10 10)
+ui::size.set win_comemocos (get winWidth) (get winHeight)
+
+# title label
+ui::label title
+def set_title : {
+    ui::text.set title (join "¡" (get comemocos) " se come los mocos!")
+}
+set_title
+ui::loc.set title 10 10
+ui::size.set title (- (ui::size.get.w win_comemocos) 20) (get buttonHeight)
+ui::label.align title center middle
+ui::label.style title bold italic shadow
+ui::window.add win_comemocos title
+
+# image
+!*ui::image image
+ui::size.set image (get imageWidth) (get imageWidth)
+ui::loc.set image 10 (+ 10 10 (get buttonHeight))
+ui::image.set image "noit.png"
+ui::window.add win_comemocos image*!
+
+ui::window.add win_comemocos (ui::image.set (ui::loc.set (ui::size.set (ui::image image) (get imageWidth) (get imageWidth)) 10 (+ 10 10 (get buttonHeight))) "noit.png")
+
+# eaten label
+ui::label eaten
+ui::size.set eaten (+ (* 2 (get buttonWidth)) 10) (get buttonHeight)
+ui::loc.set eaten (+ 10 (get imageWidth) 10) (+ 10 (get buttonHeight) 10)
+ui::window.add win_comemocos eaten
+setEatenLabel
+
+# eat button
+ui::button eat
+ui::text.set eat "Comer Mocos"
+ui::size.set eat (get buttonWidth) (get buttonHeight)
+ui::loc.set eat (+ 10 (get imageWidth) 10) (+ 10 (* 2 (get buttonHeight)) 10 10)
+ui::button.onpress eat {
+    set mococount (+ (get mococount) 1)
+    setEatenLabel
+}
+ui::window.add win_comemocos eat
+
+# reset button
+ui::button reset
+ui::text.set reset "Vomitar mocos"
+ui::size.set reset (get buttonWidth) (get buttonHeight)
+ui::loc.set reset (+ 10 (get imageWidth) 10 (get buttonWidth) 10) (+ 10 (* 2 (get buttonHeight)) 10 10)
+ui::button.onpress reset {
+    ui::alert (join "¡" (get comemocos) " está vomitando todos los mocos!")
+    set mococount 0
+    setEatenLabel
+}
+ui::window.add win_comemocos reset
+
+# change button
+ui::button change
+ui::text.set change "Cambiar comemocos"
+ui::size.set change (- (get winWidth) 20) (get buttonHeight)
+ui::loc.set change 10 (- (- (get winHeight) (get buttonHeight)) 10)
+ui::button.onpress change {
+    set comemocosid (+ 1 (get comemocosid))
+    if {>= (get comemocosid) 5} {set comemocosid 0}
+    if {= (get comemocosid) 0} {
+        set comemocos "Noit"
+        ui::image.set image "noit.png"
+    }
+    if {= (get comemocosid) 1} {
+        set comemocos "Goldsmith"
+        ui::image.set image "goldsmith.png"
+    }
+    if {= (get comemocosid) 2} {
+        set comemocos "Dylan"
+        ui::image.set image "dylan.png"
+    }
+    if {= (get comemocosid) 3} {
+        set comemocos "Leandro"
+        ui::image.set image "leandro.png"
+    }
+    if {= (get comemocosid) 4} {
+        set comemocos "Moncholo"
+        ui::image.set image "moncholo.png"
+    }
+    set_title
+    setEatenLabel
+}
+ui::window.add win_comemocos change
+
+ui::run win_comemocos

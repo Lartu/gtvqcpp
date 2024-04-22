@@ -108,6 +108,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
     gtvqString current_token = "";
     bool parsing_string = false;
     bool parsing_comment = false;
+    bool parsing_line_comment = false;
     size_t block_quote_level = 0;
     size_t subline_level = 0;
     gtvqString last_two_chars = ";;";
@@ -115,10 +116,10 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
     for (size_t i = 0; i < source.length(); ++i)
     {
         char character = source[i];
-        last_two_chars = (string)"" + last_two_chars[1] + character;
+        last_two_chars = (string) "" + last_two_chars[1] + character;
 
         // Comments
-        if (last_two_chars == "!*" && !parsing_string)
+        if (last_two_chars == "!*" && !parsing_string && !parsing_line_comment)
         {
             current_token = current_token.substr(1);
             parsing_comment = true;
@@ -128,8 +129,17 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             current_token = current_token.substr(0, current_token.length() - 1);
             parsing_comment = false;
         }
+        // Line Comments
+        else if (character == '#' && !parsing_string && !parsing_comment)
+        {
+            parsing_line_comment = true;
+        }
+        else if (character == '\n' && parsing_line_comment)
+        {
+            parsing_line_comment = false;
+        }
         // Strings
-        else if (character == '"' && !next_char_is_escaped && !parsing_comment && !parsing_string)
+        else if (character == '"' && !next_char_is_escaped && !parsing_comment && !parsing_line_comment && !parsing_string)
         {
             parsing_string = true;
             if (subline_level > 0 || block_quote_level > 0)
@@ -153,7 +163,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
         }
         // Sublines
-        else if (character == '(' && !parsing_comment && !parsing_string)
+        else if (character == '(' && !parsing_comment && !parsing_line_comment && !parsing_string)
         {
             if (subline_level > 0 || block_quote_level > 0)
             {
@@ -161,7 +171,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
             subline_level += 1;
         }
-        else if (character == ')' && !parsing_comment && !parsing_string)
+        else if (character == ')' && !parsing_comment && !parsing_line_comment && !parsing_string)
         {
             subline_level -= 1;
             if (subline_level > 0 || block_quote_level > 0)
@@ -178,18 +188,18 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
         }
         // Block Quotes
-        else if (character == '{' && !parsing_comment && !parsing_string)
+        else if (character == '{' && !parsing_comment && !parsing_line_comment && !parsing_string)
         {
-            if (block_quote_level > 0)
+            if (block_quote_level > 0 || subline_level > 0)
             {
                 current_token += character;
             }
             block_quote_level += 1;
         }
-        else if (character == '}' && !parsing_comment && !parsing_string)
+        else if (character == '}' && !parsing_comment && !parsing_line_comment && !parsing_string)
         {
             block_quote_level -= 1;
-            if (block_quote_level > 0)
+            if (block_quote_level > 0 || subline_level > 0)
             {
                 current_token += character;
             }
@@ -203,7 +213,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
         }
         // Whitespace
-        else if ((isspace(character) || character == ';') && !parsing_comment && !parsing_string && subline_level == 0 && block_quote_level == 0)
+        else if ((isspace(character) || character == ';') && !parsing_comment && !parsing_line_comment && !parsing_string && subline_level == 0 && block_quote_level == 0)
         {
             // Push word
             gtvqString_trim(current_token);
@@ -227,7 +237,7 @@ vector<gtvqLine> gtvq_tokenize_source(gtvqString source)
             }
         }
         // Other characters
-        else if (!parsing_comment)
+        else if (!parsing_comment && !parsing_line_comment)
         {
             if (subline_level == 0 && block_quote_level == 0 && parsing_string)
             {

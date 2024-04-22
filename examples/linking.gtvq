@@ -27,12 +27,12 @@ def unfibonacci : n {
     }
 }
 
-for i from 0 to (+ 200 1) {
+for i from 0 to (+ 500 1) {
     display "Fibonacci of " (get i) ": " (fibonacci (get i))
 }
 
 for i from 0 to (+ 20 1) {
-    display "Unibonacci of " (get i) ": " (unfibonacci (get i))
+    display "Unoptimized Fibonacci of " (get i) ": " (unfibonacci (get i))
 }
 
 

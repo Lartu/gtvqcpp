@@ -1,0 +1,73 @@
+!*:.:.:.:.!
+! UI TEST !
+!.:.:.:.:*!
+
+link basic math ui
+
+def ui::window.center : window_id {
+    ui::loc.set (get window_id) (/ (- (ui::screen.w) (ui::size.get.w (get window_id))) 2) (/ (- (ui::screen.h) (ui::size.get.h (get window_id))) 2)
+}
+
+!* --- main window --- *!
+ui::window window1
+ui::size.set window1 400 200
+ui::text.set window1 "Comemocos en GTVQ"
+
+!* --- button --- *!
+set buttonWidth 140
+set buttonHeight 30
+set imageHeight (+ 10 (* 2 (get buttonHeight)))
+set comemocos "Noit"
+
+ui::button button1
+ui::text.set button1 "Comer Mocos"
+ui::loc.set button1 (+ (get imageHeight) 10 10) (+ (get buttonHeight) 10 10)
+ui::size.set button1 (get buttonWidth) (get buttonHeight)
+ui::button.onpress button1 {
+    set mococount (+ (get mococount) 1)
+    setMocoLabel
+}
+ui::window.add window1 button1
+
+ui::button button2
+ui::text.set button2 "Vomitar Mocos"
+ui::loc.set button2 (+ 10 (get imageHeight) 10 (get buttonWidth) 10) (+ (get buttonHeight) 10 10)
+ui::size.set button2 (get buttonWidth) (get buttonHeight)
+ui::button.onpress button2 {
+    ui::alert (join "¡" (get comemocos) " está vomitando todos los mocos!")
+    set mococount 0
+    setMocoLabel
+}
+ui::window.add window1 button2
+
+def setMocoLabel : {
+    if {= (get mococount) 0} {
+        ui::text.set label1 (join (get comemocos) " no se comió ningún moco.")
+    } else {
+        ui::text.set label1 (join (get comemocos) " se comió " (get mococount) " " (if {= 1 (get mococount)} {
+            val "moco"
+        } else {
+            val "mocos"
+        }) ".")
+    }
+}
+
+!* --- Comemocos Label --- *!
+set mocostext "Mocos comidos: "
+set mococount 0
+ui::label label1
+ui::size.set label1 200 (get buttonHeight)
+ui::loc.set label1 (+ (get imageHeight) 10 10) 10
+ui::window.add window1 label1
+setMocoLabel
+
+ui::image image1
+ui::image.set image1 "noit.png"
+ui::size.set image1 (get imageHeight) (get imageHeight)
+ui::loc.set image1 10 10
+ui::window.add window1 image1
+
+!* --- run the program --- *!
+ui::size.set window1 (+ 10 (get imageHeight) 10 (* 2 (get buttonWidth)) 10 10) (+ 10 (get imageHeight) 10)
+ui::window.center window1
+ui::run window1
