@@ -1,3 +1,5 @@
+link basic
+
 !* This will display Hello world! *!
 display "Hello world!"
 

@@ -314,11 +314,12 @@ gtvqString load_module_handler(gtvqString &command, vector<gtvqString> &paramete
 {
     for (gtvqString &parameter : parameters)
     {
-        string lib_name = parameter + ".gvdl";
+        string lib_name = "./" + parameter + ".gvdl";
         void *handle = dlopen(lib_name.c_str(), RTLD_LAZY);
         if (!handle)
         {
-            gtvq_error("Cannot link library: " + lib_name);
+            char* error = dlerror();
+            gtvq_error("Cannot link library: " + lib_name + (error? error : ""));
         }
 
         // Load the symbol
