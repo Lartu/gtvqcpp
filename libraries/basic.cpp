@@ -203,19 +203,26 @@ gtvqString for_handler(gtvqString &command, vector<gtvqString> &parameters)
         gtvq_error("for expects numeric min and max values.");
     }
 
-    double min_value = stoi(parameters[2]);
-    double max_value = stoi(parameters[4]);
-
-    size_t increment = 1;
-    if (max_value < min_value)
-        increment = -1;
-
+    long from_value = stol(parameters[2]);
+    long to_value = stol(parameters[4]);
+    
     long i;
 
-    for (long i = min_value; i < max_value; i += increment)
+    if (from_value <= to_value)
     {
-        set_variable(parameters[0], toString(i));
-        gtvq_execute_code(parameters[5]);
+        for (i = from_value; i < to_value; i++)
+        {
+            set_variable(parameters[0], toString(i));
+            gtvq_execute_code(parameters[5]);
+        }
+    }
+    else
+    {
+        for (i = from_value; i > to_value; i--)
+        {
+            set_variable(parameters[0], toString(i));
+            gtvq_execute_code(parameters[5]);
+        }
     }
 
     return toString(i);
