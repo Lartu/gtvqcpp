@@ -1,4 +1,6 @@
 #include <limits>
+#include <algorithm>
+#include <cmath>
 #include "../gtvqStringAlt.h"
 
 using namespace std;

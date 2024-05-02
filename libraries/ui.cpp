@@ -18,7 +18,7 @@
 #include <FL/Fl_Value_Slider.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_File_Chooser.H>
-#include <FL/Fl_PNG_Image.h>
+#include <FL/Fl_PNG_Image.H>
 
 enum WidgetType
 {

@@ -2,7 +2,7 @@
 ! FizzBuzz !
 !.:.:.:.:.*!
 
-link basic math
+link ./basic ./math
 
 def fibonacci : n {
     if { varex (join (get n) "cache") } {
